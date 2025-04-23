@@ -32,15 +32,30 @@ export const methods = z.enum([
 
 export class Router {
 	routeDir: string;
-	parser: RouteParser;
+	parser: RouteParser = defaultParser;
+	glob: string = '**/*.svelte';
 
 	/**
-	 * @param {string} routeDir The directory the routes are placed in
-	 * @param {RouteParser} [parser] - The route parser, transforming file paths to the proper routes of the site. The output should start with a "/". Consider looking into the rou3 documentation for details: https://github.com/h3js/rou3
+	 * @typedef {Object} RouterConfig
+	 * @property {string} routeDir - The directory containing route files.
+	 * @property {string} [glob] - Optional glob pattern for file matching.
+	 * @property {typeof Router.prototype.parser} [parser] - Optional custom parser function.
 	 */
-	constructor(routeDir: string, parser?: typeof this.parser) {
-		this.routeDir = path.resolve(routeDir);
-		this.parser = parser ?? defaultParser;
+
+	/**
+	 * @param {RouterConfig} config - Configuration object.
+	 * routeDir: The directory containing route files.
+	 * glob: The pattern for file matching.
+	 * parser: The route parser, transforming file paths to the proper routes of the site. The output should start with a "/". Consider looking into the rou3 documentation for details: https://github.com/h3js/rou3
+	 */
+	constructor(config: {
+		routeDir: string;
+		glob?: string;
+		parser?: typeof Router.prototype.parser;
+	}) {
+		this.routeDir = path.resolve(config.routeDir);
+		if (config.parser) this.parser = config.parser;
+		if (config.glob) this.glob = config.glob;
 	}
 
 	watch(signal?: AbortSignal) {
