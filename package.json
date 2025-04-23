@@ -19,7 +19,8 @@
     "svelte": "^5.28.2",
     "unhead": "^2.0.8",
     "uqr": "^0.1.2",
-    "vite": "^6.3.2"
+    "vite": "^6.3.2",
+    "zod": "^4.0.0-beta.20250420T053007"
   },
   "peerDependencies": {
     "typescript": "^5"
