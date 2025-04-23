@@ -18,7 +18,17 @@ const defaultParser: RouteParser = (file) => {
 	};
 };
 
-export const methods = z.enum(['get', 'post', 'put', 'patch', 'delete']);
+export const methods = z.enum([
+	'get',
+	'post',
+	'put',
+	'patch',
+	'delete',
+	'connect',
+	'options',
+	'trace',
+	'head',
+]);
 
 class Router {
 	routeDir: string;
