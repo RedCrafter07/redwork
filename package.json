@@ -1,0 +1,27 @@
+{
+  "name": "redwork",
+  "module": "index.ts",
+  "type": "module",
+  "private": true,
+  "devDependencies": {
+    "@sveltejs/vite-plugin-svelte": "^5.0.3",
+    "@types/bun": "latest",
+    "c12": "^3.0.3",
+    "chalk": "^5.4.1",
+    "citty": "^0.1.6",
+    "confbox": "^0.2.2",
+    "consola": "^3.4.2",
+    "defu": "^6.1.4",
+    "dotenv": "^16.5.0",
+    "get-port-please": "^3.1.2",
+    "h3": "^1.15.1",
+    "rou3": "^0.6.1",
+    "svelte": "^5.28.2",
+    "unhead": "^2.0.8",
+    "uqr": "^0.1.2",
+    "vite": "^6.3.2"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  }
+}
