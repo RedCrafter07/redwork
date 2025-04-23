@@ -1,6 +1,5 @@
 import { write } from 'bun';
 import { watch } from 'chokidar';
-import type { RouterMethod } from 'h3';
 import { glob } from 'node:fs/promises';
 import path from 'node:path';
 import { addRoute, createRouter, findRoute } from 'rou3';
