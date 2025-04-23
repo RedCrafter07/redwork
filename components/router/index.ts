@@ -1,4 +1,5 @@
 import { write } from 'bun';
+import chalk from 'chalk';
 import { watch } from 'chokidar';
 import { glob } from 'node:fs/promises';
 import path from 'node:path';
@@ -48,12 +49,33 @@ class Router {
 			ignoreInitial: true,
 		});
 
-		const handleChange = async () => {
-			console.log(await this.generateRoutes());
+		const handleChange = async (event: 'add' | 'delete', filePath: string) => {
+			switch (event) {
+				case 'add':
+					console.log(
+						chalk.white(
+							`${chalk.green('[+]')} Added route for ${chalk.magenta(
+								this.parser(filePath).route,
+							)} ${chalk.gray(path.join(this.routeDir, filePath))}`,
+						),
+					);
+					break;
+				case 'delete':
+					console.log(
+						chalk.white(
+							`${chalk.red('[-]')} Deleted route for ${chalk.magenta(
+								this.parser(filePath).route,
+							)} ${chalk.gray(path.join(this.routeDir, filePath))}`,
+						),
+					);
+					break;
+			}
 		};
 
-		watcher.on('add', handleChange);
-		watcher.on('unlink', handleChange);
+		console.log(chalk.white(`${chalk.yellow('[/]')} Watcher started!`));
+
+		watcher.on('add', (path) => handleChange('add', path));
+		watcher.on('unlink', (path) => handleChange('delete', path));
 
 		signal?.addEventListener('abort', () => {
 			watcher.close();
@@ -127,3 +149,6 @@ type RouteParser = (input: string) => {
 
 export type { RouteParser };
 export { Router };
+
+const r = new Router('./src');
+r.watch();
