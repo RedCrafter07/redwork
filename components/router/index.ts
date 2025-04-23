@@ -30,7 +30,7 @@ export const methods = z.enum([
 	'head',
 ]);
 
-class Router {
+export class Router {
 	routeDir: string;
 	parser: RouteParser;
 
@@ -142,10 +142,7 @@ class Router {
 	}
 }
 
-type RouteParser = (input: string) => {
+export type RouteParser = (input: string) => {
 	route: string;
 	method: z.infer<typeof methods>;
 };
-
-export type { RouteParser };
-export { Router };
