@@ -149,6 +149,3 @@ type RouteParser = (input: string) => {
 
 export type { RouteParser };
 export { Router };
-
-const r = new Router('./src');
-r.watch();
