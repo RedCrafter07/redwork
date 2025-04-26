@@ -2,7 +2,7 @@ import { write } from 'bun';
 import chalk from 'chalk';
 import { watch } from 'chokidar';
 import { glob } from 'node:fs/promises';
-import path from 'node:path';
+import { join, resolve } from 'node:path';
 import { addRoute, createRouter, findRoute } from 'rou3';
 import * as z from 'zod';
 
@@ -53,7 +53,7 @@ export class Router {
 		glob?: string;
 		parser?: typeof Router.prototype.parser;
 	}) {
-		this.routeDir = path.resolve(config.routeDir);
+		this.routeDir = resolve(config.routeDir);
 		if (config.parser) this.parser = config.parser;
 		if (config.glob) this.glob = config.glob;
 	}
@@ -71,7 +71,7 @@ export class Router {
 						chalk.white(
 							`${chalk.green('[+]')} Added route for ${chalk.magenta(
 								this.parser(filePath).path,
-							)} ${chalk.gray(path.join(this.routeDir, filePath))}`,
+							)} ${chalk.gray(join(this.routeDir, filePath))}`,
 						),
 					);
 					break;
@@ -80,7 +80,7 @@ export class Router {
 						chalk.white(
 							`${chalk.red('[-]')} Deleted route for ${chalk.magenta(
 								this.parser(filePath).path,
-							)} ${chalk.gray(path.join(this.routeDir, filePath))}`,
+							)} ${chalk.gray(join(this.routeDir, filePath))}`,
 						),
 					);
 					break;
@@ -126,13 +126,7 @@ export class Router {
 		});
 
 		// validate data, in case parser hasn't been implemented properly
-		const validated = schema.parse(generatedRoutes);
-
-		return validated.map(({ method, path, route }) => ({
-			method,
-			path,
-			route: () => import(route),
-		}));
+		return schema.parse(generatedRoutes);
 	}
 
 	/**
@@ -143,7 +137,18 @@ export class Router {
 		input: Awaited<ReturnType<typeof this.generateRoutes>>,
 		path: string,
 	) {
-		await write(path, `const routes = ${JSON.stringify(input)}`);
+		await write(
+			path,
+			`const routes = [${input
+				.map(({ method, path, route }) => {
+					return `{method:${JSON.stringify(method)},path:${JSON.stringify(
+						path,
+					)},route: () => import(${JSON.stringify(
+						join(this.routeDir, route),
+					)})}`;
+				})
+				.join(',')} ]`,
+		);
 	}
 
 	/**
