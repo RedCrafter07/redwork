@@ -139,7 +139,7 @@ export class Router {
 	) {
 		await write(
 			path,
-			`const routes = [${input
+			`export const routes = [${input
 				.map(({ method, path, route }) => {
 					return `{method:${JSON.stringify(method)},path:${JSON.stringify(
 						path,
@@ -150,25 +150,11 @@ export class Router {
 				.join(',')} ]`,
 		);
 	}
-
-	/**
-	 * @description Matches a given route to the provided routes. Intended for use in front/backend routers
-	 */
-	static getRoute(
-		route: string,
-		routes: Awaited<ReturnType<typeof this.prototype.generateRoutes>>,
-	) {
-		const router = createRouter<{ file: any }>();
-
-		routes.forEach((r) => {
-			addRoute(router, 'get', r.path, { file: r.route });
-		});
-
-		return findRoute(router, 'get', route);
-	}
 }
+
+export type Methods = z.infer<typeof methods>;
 
 export type RouteParser = (input: string) => {
 	path: string;
-	method: z.infer<typeof methods>;
+	method: Methods;
 };
