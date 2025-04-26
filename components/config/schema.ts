@@ -14,6 +14,14 @@ export const configSchema = z.object({
 			path: z.string().default('./api'),
 		}),
 	]),
+
+	dirs: z
+		.object({
+			redworkFolder: z.string(),
+		})
+		.default({
+			redworkFolder: './.redwork/',
+		}),
 });
 
 export type Config = z.infer<typeof configSchema>;
