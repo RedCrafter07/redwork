@@ -9,7 +9,7 @@ import * as z from 'zod';
 const defaultParser: RouteParser = (file) => {
 	return {
 		method: 'get',
-		route: `/${file
+		path: `/${file
 			.replace(/\\/g, '/')
 			.replace(/(\/?)\.svelte$/g, '')
 			.replace('$', ':')
@@ -70,7 +70,7 @@ export class Router {
 					console.log(
 						chalk.white(
 							`${chalk.green('[+]')} Added route for ${chalk.magenta(
-								this.parser(filePath).route,
+								this.parser(filePath).path,
 							)} ${chalk.gray(path.join(this.routeDir, filePath))}`,
 						),
 					);
@@ -79,7 +79,7 @@ export class Router {
 					console.log(
 						chalk.white(
 							`${chalk.red('[-]')} Deleted route for ${chalk.magenta(
-								this.parser(filePath).route,
+								this.parser(filePath).path,
 							)} ${chalk.gray(path.join(this.routeDir, filePath))}`,
 						),
 					);
@@ -109,24 +109,30 @@ export class Router {
 
 		const schema = z
 			.object({
-				path: z.string(),
-				route: z.string().min(1).startsWith('/'),
+				route: z.string(),
+				path: z.string().min(1).startsWith('/'),
 				method: methods,
 			})
 			.array();
 
 		const generatedRoutes = files.map((f) => {
-			const { method, route } = this.parser(f);
+			const { method, path } = this.parser(f);
 
 			return {
-				path: f,
+				path,
 				method,
-				route,
+				route: f,
 			};
 		});
 
 		// validate data, in case parser hasn't been implemented properly
-		return schema.parse(generatedRoutes);
+		const validated = schema.parse(generatedRoutes);
+
+		return validated.map(({ method, path, route }) => ({
+			method,
+			path,
+			route: () => import(route),
+		}));
 	}
 
 	/**
@@ -147,10 +153,10 @@ export class Router {
 		route: string,
 		routes: Awaited<ReturnType<typeof this.prototype.generateRoutes>>,
 	) {
-		const router = createRouter<{ file: string }>();
+		const router = createRouter<{ file: any }>();
 
 		routes.forEach((r) => {
-			addRoute(router, 'get', r.route, { file: r.path });
+			addRoute(router, 'get', r.path, { file: r.route });
 		});
 
 		return findRoute(router, 'get', route);
@@ -158,6 +164,6 @@ export class Router {
 }
 
 export type RouteParser = (input: string) => {
-	route: string;
+	path: string;
 	method: z.infer<typeof methods>;
 };
