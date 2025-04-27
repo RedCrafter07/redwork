@@ -2,8 +2,7 @@ import { write } from 'bun';
 import chalk from 'chalk';
 import { watch } from 'chokidar';
 import { glob } from 'node:fs/promises';
-import { join, resolve } from 'node:path';
-import { addRoute, createRouter, findRoute } from 'rou3';
+import { dirname, join, relative, resolve } from 'pathe';
 import * as z from 'zod';
 
 const defaultParser: RouteParser = (file) => {
@@ -121,7 +120,7 @@ export class Router {
 			return {
 				path,
 				method,
-				route: f,
+				route: f.replaceAll('\\', '/'),
 			};
 		});
 
@@ -140,12 +139,17 @@ export class Router {
 		await write(
 			path,
 			`export const routes = [${input
-				.map(({ method, path, route }) => {
+				.map(({ method, path: routePath, route }) => {
+					const routeFile = join(this.routeDir, route);
+					let importPath = relative(dirname(resolve(path)), routeFile);
+
+					if (!importPath.startsWith('.')) {
+						importPath = './' + importPath;
+					}
+
 					return `{method:${JSON.stringify(method)},path:${JSON.stringify(
-						path,
-					)},route: () => import(${JSON.stringify(
-						join(this.routeDir, route),
-					)})}`;
+						routePath,
+					)},route: () => import(${JSON.stringify(importPath)})}`;
 				})
 				.join(',')} ]`,
 		);
