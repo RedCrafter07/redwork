@@ -10,7 +10,6 @@ export function getRoute(
 		path: string;
 		file: () => any;
 	}[],
-	nodeEnv?: string,
 ) {
 	const router = createRouter<{ file: () => Promise<any> }>();
 
