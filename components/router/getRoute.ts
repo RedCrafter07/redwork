@@ -8,13 +8,14 @@ export function getRoute(
 	routes: {
 		method: string;
 		path: string;
-		route: () => any;
+		file: () => any;
 	}[],
+	nodeEnv?: string,
 ) {
 	const router = createRouter<{ file: () => Promise<any> }>();
 
 	routes.forEach((r) => {
-		addRoute(router, 'get', r.path, { file: r.route });
+		addRoute(router, 'get', r.path, { file: r.file });
 	});
 
 	return findRoute(router, 'get', route);
