@@ -113,7 +113,7 @@ export class Router {
 
 		const schema = z
 			.object({
-				route: z.string(),
+				file: z.string(),
 				path: z.string().min(1).startsWith('/'),
 				method: methods,
 			})
@@ -125,7 +125,7 @@ export class Router {
 			return {
 				path,
 				method,
-				route: f.replaceAll('\\', '/'),
+				file: f.replaceAll('\\', '/'),
 			};
 		});
 
@@ -144,8 +144,8 @@ export class Router {
 		await write(
 			path,
 			`export const routes = [${input
-				.map(({ method, path: routePath, route }) => {
-					const routeFile = join(this.routeDir, route);
+				.map(({ method, path: routePath, file }) => {
+					const routeFile = join(this.routeDir, file);
 					let importPath = relative(dirname(resolve(path)), routeFile);
 
 					if (!importPath.startsWith('.')) {
