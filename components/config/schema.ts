@@ -1,9 +1,14 @@
 import * as z from 'zod';
+import { methods } from '../router';
 
 export const configSchema = z.object({
-	frontend: z.object({
-		path: z.string().default('./src'),
-	}),
+	frontend: z
+		.object({
+			path: z.string(),
+		})
+		.default({
+			path: './routes',
+		}),
 
 	api: z.union([
 		z.object({
@@ -15,13 +20,34 @@ export const configSchema = z.object({
 		}),
 	]),
 
-	dirs: z
+	public: z
 		.object({
-			redworkFolder: z.string(),
+			path: z.string(),
 		})
 		.default({
-			redworkFolder: './.redwork/',
+			path: './public',
 		}),
+
+	routeParser: z
+		.function(
+			z.tuple([z.string({ description: 'The file path' })]),
+			z.object({
+				path: z.string(),
+				method: methods,
+			}),
+		)
+		.default((file) => {
+			return {
+				method: 'get',
+				path: `/${file
+					.replace(/\\/g, '/')
+					.replace(/(\/?)\.svelte$/g, '')
+					.replace('$', ':')
+					.replace(/index$/g, '')
+					.replace(/\/$/g, '')}`,
+			};
+		})
+		.optional(),
 });
 
 export type Config = z.infer<typeof configSchema>;
