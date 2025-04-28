@@ -182,7 +182,7 @@ export class Router {
 
 					return `{method:${JSON.stringify(method)},path:${JSON.stringify(
 						routePath,
-					)},route: () => import(${JSON.stringify(importPath)})}`;
+					)},file: () => import(${JSON.stringify(importPath)})}`;
 				})
 				.join(',')} ]`,
 		);
