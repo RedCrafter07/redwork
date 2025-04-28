@@ -57,7 +57,10 @@ export class Router {
 		if (config.glob) this.glob = config.glob;
 	}
 
-	watch(signal?: AbortSignal) {
+	watch(
+		callback: (routes: Awaited<ReturnType<typeof this.generateRoutes>>) => void,
+		signal?: AbortSignal,
+	) {
 		const watcher = watch('.', {
 			cwd: this.routeDir,
 			ignoreInitial: true,
@@ -73,6 +76,7 @@ export class Router {
 							)} ${chalk.gray(join(this.routeDir, filePath))}`,
 						),
 					);
+					callback(await this.generateRoutes());
 					break;
 				case 'delete':
 					console.log(
@@ -82,6 +86,7 @@ export class Router {
 							)} ${chalk.gray(join(this.routeDir, filePath))}`,
 						),
 					);
+					callback(await this.generateRoutes());
 					break;
 			}
 		};
