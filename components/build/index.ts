@@ -16,12 +16,11 @@ export const sharedPlugins: PluginOption[] = [
 
 export default async function build(options: {
 	ssg: boolean;
-	ssr: boolean;
 	routeDir: string;
 }) {
 	const consola = createConsola();
 
-	const { ssr, ssg, routeDir } = options;
+	const { ssg, routeDir } = options;
 
 	const spinner = ora({
 		spinner: 'circleHalves',
@@ -51,11 +50,9 @@ export default async function build(options: {
 	await buildClient();
 	spinner.succeed();
 
-	if (ssr) {
-		spinner.start('Building SSR...');
-		await buildSSR();
-		spinner.succeed();
-	} else consola.info('Skipping SSR build...');
+	spinner.start('Building SSR...');
+	await buildSSR();
+	spinner.succeed();
 
 	spinner.start('Prerendering pages...');
 	await buildSSG(router, ssg);
@@ -64,4 +61,4 @@ export default async function build(options: {
 	consola.success('Build completed successfully!');
 }
 
-build({ ssr: true, ssg: true, routeDir: './routes' });
+build({ ssg: true, routeDir: './routes' });
