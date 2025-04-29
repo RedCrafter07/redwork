@@ -1,32 +1,24 @@
 import * as z from 'zod';
 import { methods } from '../router';
 
-export const configSchema = z.object({
-	frontend: z
-		.object({
-			path: z.string(),
-		})
-		.default({
-			path: './routes',
-		}),
+const Disabled = z.object({ enabled: z.literal(false) });
+const EnabledWithPath = (defaultPath: string) =>
+	z.object({ enabled: z.literal(true), path: z.string().default(defaultPath) });
 
-	api: z.union([
-		z.object({
-			enabled: z.literal(false),
-		}),
-		z.object({
-			enabled: z.literal(true),
-			path: z.string().default('./api'),
-		}),
-	]),
+export const configSchema = z.object({
+	routes: z
+		.object({
+			path: z.string().describe('Path to the routes directory.'),
+		})
+		.default({ path: './routes' }),
+
+	api: z
+		.union([Disabled, EnabledWithPath('./api')])
+		.default({ enabled: false }),
 
 	public: z
-		.object({
-			path: z.string(),
-		})
-		.default({
-			path: './public',
-		}),
+		.union([Disabled, EnabledWithPath('./public')])
+		.default({ enabled: false }),
 
 	routeParser: z
 		.function(
@@ -36,18 +28,15 @@ export const configSchema = z.object({
 				method: methods,
 			}),
 		)
-		.default((file) => {
-			return {
-				method: 'get',
-				path: `/${file
-					.replace(/\\/g, '/')
-					.replace(/(\/?)\.svelte$/g, '')
-					.replace('$', ':')
-					.replace(/index$/g, '')
-					.replace(/\/$/g, '')}`,
-			};
-		})
-		.optional(),
+		.default((file) => ({
+			method: 'get',
+			path: `/${file
+				.replace(/\\/g, '/')
+				.replace(/(\/?)\.svelte$/g, '')
+				.replace('$', ':')
+				.replace(/index$/g, '')
+				.replace(/\/$/g, '')}`,
+		})),
 
 	build: z
 		.object({
@@ -55,14 +44,15 @@ export const configSchema = z.object({
 				.boolean()
 				.describe(
 					'If true, static html pages will be generated during build time. This can be turned off for routes individually. True by default.',
-				),
+				)
+				.default(true),
 			ssr: z
 				.boolean()
-				.describe(
-					'Global SSR switch. This will disable SSR entirely if false.',
-				),
+				.describe('Global SSR switch. This will disable SSR entirely if false.')
+				.default(true),
 		})
 		.default({ prerender: true, ssr: true }),
 });
 
 export type Config = z.infer<typeof configSchema>;
+export type ConfigInput = z.input<typeof configSchema>;
