@@ -48,6 +48,21 @@ export const configSchema = z.object({
 			};
 		})
 		.optional(),
+
+	build: z
+		.object({
+			prerender: z
+				.boolean()
+				.describe(
+					'If true, static html pages will be generated during build time. This can be turned off for routes individually. True by default.',
+				),
+			ssr: z
+				.boolean()
+				.describe(
+					'Global SSR switch. This will disable SSR entirely if false.',
+				),
+		})
+		.default({ prerender: true, ssr: true }),
 });
 
 export type Config = z.infer<typeof configSchema>;
