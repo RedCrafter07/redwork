@@ -2,7 +2,7 @@ import { write } from 'bun';
 import chalk from 'chalk';
 import { watch } from 'chokidar';
 import { glob } from 'node:fs/promises';
-import { dirname, join, parse, relative, resolve } from 'pathe';
+import { dirname, join, relative, resolve } from 'pathe';
 import * as z from 'zod';
 
 const defaultParser: RouteParser = (file) => {
