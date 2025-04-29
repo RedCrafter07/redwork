@@ -8,6 +8,7 @@ import { buildSSR } from './stages/ssr';
 import { buildSSG } from './stages/ssg';
 import { exists, rm } from 'node:fs/promises';
 import { resolve } from 'pathe';
+import { createConsola } from 'consola';
 
 export const sharedPlugins: PluginOption[] = [
 	svelte({ preprocess: vitePreprocess() }),
@@ -18,51 +19,49 @@ export default async function build(options: {
 	ssr: boolean;
 	routeDir: string;
 }) {
+	const consola = createConsola();
+
 	const { ssr, ssg, routeDir } = options;
 
 	const spinner = ora({
 		spinner: 'circleHalves',
 		discardStdin: true,
-		text: 'Building for production...',
 		interval: 100,
 	});
 
-	spinner.start();
-
-	spinner.text = 'Checking for previous dist directory...';
-
+	spinner.start('Checking for previous dist directory...');
 	const distDir = resolve('./.redwork/dist');
-
-	console.log(distDir);
+	spinner.succeed();
 
 	if (await exists(distDir)) {
-		spinner.text = 'Deleting previous dist directory...';
+		spinner.start('Deleting previous dist directory...');
 		await rm(distDir, { recursive: true });
+		spinner.succeed();
 	}
 
-	spinner.text = 'Initializing...';
-
+	spinner.start('Initializing...');
 	await init('.');
+	spinner.succeed();
 
-	spinner.text = 'Generating routes...';
-
+	spinner.start('Generating routes...');
 	const router = await buildRoutes(routeDir);
+	spinner.succeed();
 
-	spinner.text = 'Building client...';
-
+	spinner.start('Building client...');
 	await buildClient();
+	spinner.succeed();
 
 	if (ssr) {
-		spinner.text = 'Building SSR...';
-
+		spinner.start('Building SSR...');
 		await buildSSR();
-	} else spinner.text = 'Skipping SSR build...';
+		spinner.succeed();
+	} else consola.info('Skipping SSR build...');
 
-	spinner.text = 'Prerendering pages...';
-
+	spinner.start('Prerendering pages...');
 	await buildSSG(router, ssg);
+	spinner.succeed();
 
-	spinner.succeed('Build successfully concluded!');
+	consola.success('Build completed successfully!');
 }
 
 build({ ssr: true, ssg: true, routeDir: './routes' });
