@@ -74,9 +74,9 @@ async function writeTemplateHtml(path: string) {
 }
 
 export async function init(pwd: string) {
-	const redworkPath = join(pwd, './.redwork');
-	const clientPath = join(redworkPath, 'client');
-	const serverPath = join(redworkPath, 'server');
+	const assetsPath = join(pwd, './.redwork', 'generated');
+	const clientPath = join(assetsPath, 'client');
+	const serverPath = join(assetsPath, 'server');
 
 	const templateName = 'index.html';
 	const clientEntryName = 'entry-client.ts';
