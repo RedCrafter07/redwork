@@ -50,7 +50,7 @@ const templateHtml = `<!DOCTYPE html>
 	</head>
 	<body>
 		<div id="root"></div>
-		<script src="./entry-client.ts"></script>
+		<script type="module" src="./entry-client.ts"></script>
 	</body>
 </html>
 `;
