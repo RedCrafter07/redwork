@@ -1,5 +1,5 @@
-import { configSchema, type Config } from './schema';
+import { configSchema, type ConfigInput } from './schema';
 
-export default function createConfig(input: Config) {
+export default function createConfig(input: ConfigInput) {
 	return configSchema.parse(input);
 }
