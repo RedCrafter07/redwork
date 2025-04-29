@@ -21,6 +21,8 @@ export default async function ssrRoute(
 	} else {
 		const { default: render } = await import(modulePath);
 
-		return await render(path, await Bun.file(htmlPath).text());
+		return (await render(path, await Bun.file(htmlPath).text())) as
+			| 404
+			| string;
 	}
 }
