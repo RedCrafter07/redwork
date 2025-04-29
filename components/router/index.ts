@@ -104,7 +104,7 @@ export class Router {
 	/**
 	 * @description Compiles folder contents to a route array
 	 */
-	async generateRoutes(ssrManifest?: Record<string, string[]>) {
+	async generateRoutes() {
 		const data = glob('**/*.svelte', {
 			cwd: this.routeDir,
 		});
@@ -128,33 +128,6 @@ export class Router {
 				file: f.replaceAll('\\', '/'),
 			};
 		});
-
-		if (ssrManifest !== undefined) {
-			const routeDir = parse(this.routeDir).name;
-
-			// remap given manifest to route
-			const ssrData = Object.keys(ssrManifest)
-				.filter((k) => k.startsWith(routeDir))
-				.reduce((p, key) => {
-					const manifestEntry = ssrManifest[key];
-					if (!manifestEntry || (manifestEntry?.length ?? 0) === 0) return p;
-
-					// keep default key; doesn't include routes/
-					const newKey = key.slice(routeDir.length + 1);
-					// typescript shenanigans
-					p[newKey] = manifestEntry[0]!;
-
-					return p;
-				}, {} as Record<string, string>);
-
-			generatedRoutes = generatedRoutes.map((data) => {
-				const outFile = ssrData[data.file];
-
-				// checks if output file is contained in reduced SSR manifest
-				if (outFile) data.file = outFile;
-				return data;
-			});
-		}
 
 		// validate data, in case parser hasn't been implemented properly
 		return schema.parse(generatedRoutes);
