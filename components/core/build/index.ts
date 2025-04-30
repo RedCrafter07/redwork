@@ -1,7 +1,7 @@
 import { svelte, vitePreprocess } from '@sveltejs/vite-plugin-svelte';
 import { type PluginOption } from 'vite';
 import ora from 'ora';
-import { init } from '../core/init';
+import { init } from '../init';
 import { buildRoutes } from './stages/routes';
 import { buildClient } from './stages/client';
 import { buildSSR } from './stages/ssr';

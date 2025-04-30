@@ -1,4 +1,4 @@
-import { Router } from '../../router';
+import { Router } from '../../../router';
 
 export async function buildRoutes(routeDir: string) {
 	const router = new Router({ routeDir });

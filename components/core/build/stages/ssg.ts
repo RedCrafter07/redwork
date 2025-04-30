@@ -1,6 +1,6 @@
 import { join, relative } from 'pathe';
-import type { Router } from '../../router';
-import ssrRoute from '../../router/ssrRoute';
+import type { Router } from '../../../router';
+import ssrRoute from '../../../router/ssrRoute';
 import { write } from 'bun';
 import * as z from 'zod';
 
