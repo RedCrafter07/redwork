@@ -1,39 +1,45 @@
-import { join, resolve } from 'pathe';
+import { join, relative } from 'pathe';
 import type { Router } from '../../router';
 import ssrRoute from '../../router/ssrRoute';
 import { write } from 'bun';
-import { compile } from 'svelte/compiler';
 
-async function getSSGFromModule(path: string): Promise<boolean | undefined> {
-	try {
-		const code = await Bun.file(path).text();
-		const result = compile(code, {
-			generate: 'server',
-		});
+async function parseManifest(
+	router: Router,
+	ssrManifest: Record<string, [string]>,
+	distDir: string,
+) {
+	const routes = await router.generateRoutes();
 
-		const ssgMatch = result.js.code.match(
-			/export\s+const\s+ssg\s*=\s*(true|false)/,
-		);
+	const paths = routes.map((r) => ({
+		...r,
+		file: join(
+			distDir,
+			'ssr',
+			ssrManifest[
+				`${relative(join(distDir, 'ssr'), router.routeDir)}/${r.file}`
+			]![0],
+		),
+	}));
 
-		if (!ssgMatch) return undefined;
-		return ssgMatch[1] === 'true';
-	} catch (error) {
-		console.error(`Error processing ${path}:`, error);
-		return undefined;
-	}
+	return paths;
 }
 
-export async function buildSSG(router: Router, ssg: boolean = true) {
+export async function buildSSG(
+	router: Router,
+	ssrManifest: Record<string, [string]>,
+	ssg: boolean = true,
+	distDir: string,
+) {
+	const manifest = await parseManifest(router, ssrManifest, distDir);
+
 	const routes = (
 		await Promise.all(
-			(
-				await router.generateRoutes()
-			).map(async (r) => {
-				const useSSG = await getSSGFromModule(join(router.routeDir, r.file));
+			manifest.map(async (r) => {
+				const module = await import(r.file);
 
 				return {
 					...r,
-					ssg: useSSG ?? ssg,
+					ssg: (module.ssg as boolean | undefined) ?? ssg,
 				};
 			}),
 		)
@@ -44,8 +50,8 @@ export async function buildSSG(router: Router, ssg: boolean = true) {
 			const ssr = await ssrRoute(
 				'prod',
 				path,
-				resolve('./.redwork/dist/client/index.html'),
-				resolve('./.redwork/dist/ssr/entry-server.js'),
+				join(distDir, './client/index.html'),
+				join(distDir, './ssr/entry-server.js'),
 			);
 
 			if (ssr !== 404) return { path: path, data: ssr };

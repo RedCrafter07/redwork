@@ -7,8 +7,9 @@ import { buildClient } from './stages/client';
 import { buildSSR } from './stages/ssr';
 import { buildSSG } from './stages/ssg';
 import { exists, rm } from 'node:fs/promises';
-import { resolve } from 'pathe';
+import { join, resolve } from 'pathe';
 import { createConsola } from 'consola';
+import { file } from 'bun';
 
 export const sharedPlugins: PluginOption[] = [
 	svelte({ preprocess: vitePreprocess() }),
@@ -54,8 +55,14 @@ export default async function build(options: {
 	await buildSSR();
 	spinner.succeed();
 
+	spinner.start('Reading SSR manifest...');
+	const manifest = JSON.parse(
+		await file(join(distDir, 'ssr', '.vite', 'ssr-manifest.json')).text(),
+	);
+	spinner.succeed();
+
 	spinner.start('Prerendering pages...');
-	await buildSSG(router, ssg);
+	await buildSSG(router, manifest, ssg, distDir);
 	spinner.succeed();
 
 	consola.success('Build completed successfully!');
