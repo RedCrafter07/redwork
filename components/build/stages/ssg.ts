@@ -2,6 +2,7 @@ import { join, relative } from 'pathe';
 import type { Router } from '../../router';
 import ssrRoute from '../../router/ssrRoute';
 import { write } from 'bun';
+import * as z from 'zod';
 
 async function parseManifest(
 	router: Router,
@@ -24,6 +25,8 @@ async function parseManifest(
 	return paths;
 }
 
+const ssgReturn = z.boolean().or(z.undefined());
+
 export async function buildSSG(
 	router: Router,
 	ssrManifest: Record<string, [string]>,
@@ -37,9 +40,11 @@ export async function buildSSG(
 			manifest.map(async (r) => {
 				const module = await import(r.file);
 
+				const moduleSSG = ssgReturn.parse(module.ssg);
+
 				return {
 					...r,
-					ssg: (module.ssg as boolean | undefined) ?? ssg,
+					ssg: moduleSSG ?? ssg,
 				};
 			}),
 		)
