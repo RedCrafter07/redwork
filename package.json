@@ -3,10 +3,9 @@
 	"version": "0.0.1",
 	"module": "index.ts",
 	"type": "module",
-	"private": true,
 	"devDependencies": {
 		"@sveltejs/vite-plugin-svelte": "^5.0.3",
-		"@types/bun": "^1.2.10",
+		"@types/bun": "^1.2.11",
 		"chalk": "^5.4.1",
 		"chokidar": "^4.0.3",
 		"citty": "^0.1.6",
@@ -14,17 +13,19 @@
 		"defu": "^6.1.4",
 		"dotenv": "^16.5.0",
 		"get-port-please": "^3.1.2",
-		"h3": "^1.15.3",
 		"ora": "^8.2.0",
 		"pathe": "^2.0.3",
 		"rou3": "^0.6.1",
 		"svelte": "^5.28.2",
 		"unhead": "^2.0.8",
 		"uqr": "^0.1.2",
-		"vite": "^6.3.3",
+		"vite": "^6.3.4",
 		"zod": "^3.24.3"
 	},
 	"peerDependencies": {
 		"typescript": "^5.8.3"
+	},
+	"dependencies": {
+		"h3": "npm:h3-nightly@2.0.0-20250428-102154-f1115f3"
 	}
 }
