@@ -2,6 +2,23 @@ import { join, resolve } from 'pathe';
 import type { Router } from '../../router';
 import ssrRoute from '../../router/ssrRoute';
 import { write } from 'bun';
+import { compile } from 'svelte/compiler';
+
+async function getSSGFromModule(path: string) {
+	const code = await Bun.file(path).text();
+	const result = compile(code, {
+		generate: 'server',
+	});
+
+	const ssgLine = result.js.code
+		.split('\n')
+		.find((l) => l.startsWith('export const ssg'));
+
+	if (!ssgLine) return ssgLine;
+
+	if (ssgLine.endsWith('true;')) return true;
+	else return false;
+}
 
 export async function buildSSG(router: Router, ssg: boolean = true) {
 	const routes = (
@@ -9,11 +26,11 @@ export async function buildSSG(router: Router, ssg: boolean = true) {
 			(
 				await router.generateRoutes()
 			).map(async (r) => {
-				const route = await import(join(router.routeDir, r.file));
+				const useSSG = await getSSGFromModule(join(router.routeDir, r.file));
 
 				return {
 					...r,
-					ssg: route.ssg !== undefined ? route.ssg : ssg,
+					ssg: useSSG ?? ssg,
 				};
 			}),
 		)
