@@ -4,20 +4,23 @@ import ssrRoute from '../../router/ssrRoute';
 import { write } from 'bun';
 import { compile } from 'svelte/compiler';
 
-async function getSSGFromModule(path: string) {
-	const code = await Bun.file(path).text();
-	const result = compile(code, {
-		generate: 'server',
-	});
+async function getSSGFromModule(path: string): Promise<boolean | undefined> {
+	try {
+		const code = await Bun.file(path).text();
+		const result = compile(code, {
+			generate: 'server',
+		});
 
-	const ssgLine = result.js.code
-		.split('\n')
-		.find((l) => l.startsWith('export const ssg'));
+		const ssgMatch = result.js.code.match(
+			/export\s+const\s+ssg\s*=\s*(true|false)/,
+		);
 
-	if (!ssgLine) return ssgLine;
-
-	if (ssgLine.endsWith('true;')) return true;
-	else return false;
+		if (!ssgMatch) return undefined;
+		return ssgMatch[1] === 'true';
+	} catch (error) {
+		console.error(`Error processing ${path}:`, error);
+		return undefined;
+	}
 }
 
 export async function buildSSG(router: Router, ssg: boolean = true) {
