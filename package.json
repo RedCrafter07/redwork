@@ -2,7 +2,6 @@
 	"name": "redwork",
 	"version": "0.0.1",
 	"module": "index.ts",
-	"type": "module",
 	"devDependencies": {
 		"@sveltejs/vite-plugin-svelte": "^5.0.3",
 		"@types/bun": "^1.2.11",
@@ -13,6 +12,7 @@
 		"defu": "^6.1.4",
 		"dotenv": "^16.5.0",
 		"get-port-please": "^3.1.2",
+		"h3": "npm:h3-nightly@2.0.0-20250428-102154-f1115f3",
 		"ora": "^8.2.0",
 		"pathe": "^2.0.3",
 		"rou3": "^0.6.1",
@@ -25,7 +25,5 @@
 	"peerDependencies": {
 		"typescript": "^5.8.3"
 	},
-	"dependencies": {
-		"h3": "npm:h3-nightly@2.0.0-20250428-102154-f1115f3"
-	}
+	"type": "module"
 }
