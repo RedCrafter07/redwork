@@ -9,7 +9,7 @@ export async function buildSSR() {
 		build: {
 			outDir: '../../dist/ssr',
 			ssr: true,
-			ssrManifest: false,
+			ssrManifest: true,
 			rollupOptions: {
 				input: ['./.redwork/generated/server/entry-server.ts'],
 			},
