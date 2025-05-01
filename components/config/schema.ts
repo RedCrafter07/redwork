@@ -52,6 +52,8 @@ export const configSchema = z.object({
 				.default(true),
 		})
 		.default({ prerender: true, ssr: true }),
+
+	viteConf: z.string().optional().describe('The path for the Vite Config'),
 });
 
 export type Config = z.infer<typeof configSchema>;
