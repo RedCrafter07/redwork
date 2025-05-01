@@ -37,23 +37,19 @@
 	},
 	"exports": {
 		".": {
-			"import": "./src/index.mjs",
-			"main": "./src/index.cjs",
+			"import": "./src/index.js",
 			"types": "./src/index.d.ts"
 		},
 		"./config": {
-			"import": "./src/config/index.mjs",
-			"main": "./src/config/index.cjs",
+			"import": "./src/config/index.js",
 			"types": "./src/config/index.d.ts"
 		},
 		"./router": {
-			"import": "./src/router/index.mjs",
-			"main": "./src/router/index.cjs",
+			"import": "./src/router/index.js",
 			"types": "./src/router/index.d.ts"
 		},
 		"./server": {
-			"import": "./src/server/index.mjs",
-			"main": "./src/server/index.cjs",
+			"import": "./src/server/index.js",
 			"types": "./src/server/index.d.ts"
 		}
 	}

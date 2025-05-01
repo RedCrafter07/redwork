@@ -11,21 +11,17 @@ await build({
 		'./components/config/index.ts',
 		'./components/core/cli/index.ts',
 		'./components/router/index.ts',
+		'./components/server/index.ts',
 	],
 	keepNames: true,
 	platform: 'node',
 	sourcemap: true,
-	format: ['cjs', 'esm'],
+	format: ['esm'],
 	bundle: true,
 	dts: true,
 	minify: 'terser',
 	treeshake: 'recommended',
 	shims: true,
-	outExtension({ format }) {
-		return {
-			js: format === 'cjs' ? '.cjs' : '.mjs',
-		};
-	},
 });
 
 await cp('./package.json', './dist/package.json');
