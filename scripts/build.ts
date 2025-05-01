@@ -10,7 +10,7 @@ await build({
 		'./components/index.ts',
 		'./components/config/index.ts',
 		'./components/core/cli/index.ts',
-		'./components/core/cli/index.ts',
+		'./components/router/index.ts',
 	],
 	keepNames: true,
 	platform: 'node',
