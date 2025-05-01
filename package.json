@@ -1,7 +1,12 @@
 {
 	"name": "redwork",
 	"version": "0.0.1",
-	"module": "index.ts",
+	"main": "src/index.js",
+	"license": "MIT",
+	"author": {
+		"name": "RedCrafter07",
+		"url": "https://github.com/RedCrafter07"
+	},
 	"devDependencies": {
 		"@sveltejs/vite-plugin-svelte": "^5.0.3",
 		"@types/bun": "^1.2.11",
@@ -17,13 +22,29 @@
 		"pathe": "^2.0.3",
 		"rou3": "^0.6.1",
 		"svelte": "^5.28.2",
-		"unhead": "^2.0.8",
+		"terser": "^5.39.0",
+		"tsup": "^8.4.0",
 		"uqr": "^0.1.2",
-		"vite": "^6.3.4",
 		"zod": "^3.24.3"
 	},
 	"peerDependencies": {
 		"typescript": "^5.8.3"
 	},
-	"type": "module"
+	"type": "module",
+	"dependencies": {
+		"bun": "^1.2.11",
+		"vite": "^6.3.4"
+	},
+	"exports": {
+		".": {
+			"import": "./src/index.mjs",
+			"main": "./src/index.cjs",
+			"types": "./src/index.d.ts"
+		},
+		"./config": {
+			"import": "./src/config/index.mjs",
+			"main": "./src/config/index.cjs",
+			"types": "./src/config/index.d.ts"
+		}
+	}
 }
