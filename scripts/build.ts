@@ -1,6 +1,5 @@
 import { build } from 'tsup';
 import { cp, exists, rm } from 'node:fs/promises';
-import { Glob } from 'bun';
 
 if (await exists('./dist')) await rm('./dist', { recursive: true });
 
@@ -10,6 +9,7 @@ await build({
 	entry: [
 		'./components/index.ts',
 		'./components/config/index.ts',
+		'./components/core/cli/index.ts',
 		'./components/core/cli/index.ts',
 	],
 	keepNames: true,
@@ -28,10 +28,6 @@ await build({
 	},
 });
 
-const glob = new Glob('**/*.*');
-
-const files = await Array.fromAsync(
-	await glob.scanSync({ cwd: './dist/src', onlyFiles: true }),
-);
-
 await cp('./package.json', './dist/package.json');
+await cp('./LICENSE', './dist/LICENSE');
+await cp('./README.md', './dist/README.md');
