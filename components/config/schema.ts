@@ -1,5 +1,5 @@
 import * as z from 'zod';
-import { methods } from '../router';
+import { methods } from '../router/router';
 
 const Disabled = z.object({ enabled: z.literal(false) });
 const EnabledWithPath = (defaultPath: string) =>
