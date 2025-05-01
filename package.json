@@ -50,6 +50,11 @@
 			"import": "./src/router/index.mjs",
 			"main": "./src/router/index.cjs",
 			"types": "./src/router/index.d.ts"
+		},
+		"./server": {
+			"import": "./src/server/index.mjs",
+			"main": "./src/server/index.cjs",
+			"types": "./src/server/index.d.ts"
 		}
 	}
 }
