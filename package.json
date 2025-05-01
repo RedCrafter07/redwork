@@ -45,6 +45,11 @@
 			"import": "./src/config/index.mjs",
 			"main": "./src/config/index.cjs",
 			"types": "./src/config/index.d.ts"
+		},
+		"./router": {
+			"import": "./src/router/index.mjs",
+			"main": "./src/router/index.cjs",
+			"types": "./src/router/index.d.ts"
 		}
 	}
 }
