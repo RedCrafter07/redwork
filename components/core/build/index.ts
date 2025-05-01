@@ -15,10 +15,7 @@ export const sharedPlugins: PluginOption[] = [
 	svelte({ preprocess: vitePreprocess() }),
 ];
 
-export default async function build(options: {
-	ssg: boolean;
-	routeDir: string;
-}) {
+export async function build(options: { ssg: boolean; routeDir: string }) {
 	const consola = createConsola();
 
 	const { ssg, routeDir } = options;
@@ -67,5 +64,3 @@ export default async function build(options: {
 
 	consola.success('Build completed successfully!');
 }
-
-build({ ssg: true, routeDir: './routes' });
