@@ -1,10 +1,8 @@
 import { write } from 'bun';
-import { dirname, join, relative } from 'pathe';
+import { join } from 'pathe';
 
-const clientEntry = (
-	routeMethodPath: string,
-) => `import { hydrate } from 'svelte';
-import { getRoute } from '${routeMethodPath}';
+const clientEntry = `import { hydrate } from 'svelte';
+import { getRoute } from 'redwork/router';
 // @ts-ignore
 import { routes } from '../routes.ts';
 
@@ -17,10 +15,8 @@ getRoute(window.location.pathname, routes)
 	});
 `;
 
-const serverEntry = (
-	routeMethodPath: string,
-) => `import { render } from 'svelte/server';
-import { getRoute } from '${routeMethodPath}';
+const serverEntry = `import { render } from 'svelte/server';
+import { getRoute } from 'redwork/router';
 // @ts-ignore
 import { routes } from '../routes.ts';
 
@@ -56,17 +52,11 @@ const templateHtml = `<!DOCTYPE html>
 `;
 
 async function writeClientEntry(path: string) {
-	const relativePath =
-		relative(dirname(path), join(import.meta.dir, '..', 'router')) +
-		'/getRoute.ts';
-	await write(path, clientEntry(relativePath));
+	await write(path, clientEntry);
 }
 
 async function writeServerEntry(path: string) {
-	const relativePath =
-		relative(dirname(path), join(import.meta.dir, '..', 'router')) +
-		'/getRoute.ts';
-	await write(path, serverEntry(relativePath));
+	await write(path, serverEntry);
 }
 
 async function writeTemplateHtml(path: string) {
