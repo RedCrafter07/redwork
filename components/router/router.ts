@@ -57,7 +57,7 @@ export class Router {
 		if (config.glob) this.glob = config.glob;
 	}
 
-	watch(
+	async watch(
 		callback: (routes: Awaited<ReturnType<typeof this.generateRoutes>>) => void,
 		signal?: AbortSignal,
 	) {
@@ -91,14 +91,16 @@ export class Router {
 			}
 		};
 
-		console.log(chalk.white(`${chalk.yellow('[/]')} Watcher started!`));
-
 		watcher.on('add', (path) => handleChange('add', path));
 		watcher.on('unlink', (path) => handleChange('delete', path));
 
 		signal?.addEventListener('abort', () => {
 			watcher.close();
 		});
+
+		callback(await this.generateRoutes());
+
+		console.log(chalk.white(`${chalk.yellow('[/]')} Watcher started!`));
 	}
 
 	/**
