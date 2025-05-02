@@ -1,5 +1,5 @@
 import * as z from 'zod';
-import { methods } from '../router/router';
+import { type RouteParser } from '../router/router';
 
 const Disabled = z.object({ enabled: z.literal(false) });
 const EnabledWithPath = (defaultPath: string) =>
@@ -20,23 +20,7 @@ export const configSchema = z.object({
 		.union([Disabled, EnabledWithPath('./public')])
 		.default({ enabled: false }),
 
-	routeParser: z
-		.function(
-			z.tuple([z.string({ description: 'The file path' })]),
-			z.object({
-				path: z.string(),
-				method: methods,
-			}),
-		)
-		.default((file) => ({
-			method: 'get',
-			path: `/${file
-				.replace(/\\/g, '/')
-				.replace(/(\/?)\.svelte$/g, '')
-				.replace('$', ':')
-				.replace(/index$/g, '')
-				.replace(/\/$/g, '')}`,
-		})),
+	routeParser: z.custom<RouteParser>().optional(),
 
 	build: z
 		.object({
